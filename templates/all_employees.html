@@ -1,0 +1,14 @@
+{% extends "layout.html" %}
+{% block body %}
+  <h2>Список сотрудников:</h2>
+  {%- for employee in employees %}
+    <ul>
+      <li> Имя: {{ employee.full_name }} </li>
+      <li> Должность: {{ employee.post }} </li>
+      <li> Принят: {{ employee.hire_date }} </li> 
+      <li> Зарплата: {{ employee.salary }} руб. </li>
+      <li> Начальник: {{ employee.manager.full_name if employee.manager else 'Нет' }} </li>
+    </ul>
+    <hr>
+  {%- endfor %}
+{% endblock %}
