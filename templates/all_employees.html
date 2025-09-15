@@ -1,14 +1,49 @@
-{% extends "layout.html" %}
-{% block body %}
-  <h2>Список сотрудников:</h2>
-  {%- for employee in employees %}
-    <ul>
-      <li> Имя: {{ employee.full_name }} </li>
-      <li> Должность: {{ employee.post }} </li>
-      <li> Принят: {{ employee.hire_date }} </li> 
-      <li> Зарплата: {{ employee.salary }} руб. </li>
-      <li> Начальник: {{ employee.manager.full_name if employee.manager else 'Нет' }} </li>
-    </ul>
-    <hr>
-  {%- endfor %}
-{% endblock %}
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Список сотрудников</title>
+    <style>
+        .search-box { margin-bottom: 20px; }
+    </style>
+</head>
+<body>
+    <h1>Список сотрудников</h1>
+    
+    <!-- Форма поиска -->
+    <div class="search-box">
+        <form action="/" method="get">
+            <input type="text" name="search" value="{{ search_query }}" placeholder="Поиск по ФИО">
+            <input type="hidden" name="sort" value="{{ sort_field }}">
+            <input type="hidden" name="order" value="{{ order }}">
+            <button type="submit">Найти</button>
+        </form>
+    </div>
+    
+    <table border="1">
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>ФИО</th>
+                <th>Должность</th>
+                <th>Дата приёма</th>
+                <th>Зарплата</th>
+                <th>Начальник</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% if employees %}
+                {% for employee in employees %}
+                    <tr>
+                        <td>{{ employee.id }}</td>
+                        <td>{{ employee.full_name }}</td>
+                        <td>{{ employee.post }}</td>
+                        <td>{{ employee.hire_date }}</td>
+                        <td>{{ employee.salary }}</td>
+                        <td>{{ employee.manager.full_name if employee.manager else 'Нет' }}</td>
+                    </tr>
+                {% endfor %}
+            {% endif %}
+        </tbody>
+    </table>
+</body>
+</html>
