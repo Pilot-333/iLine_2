@@ -4,13 +4,15 @@ from sqlalchemy import asc, desc # ф-ии asc и desc использ. для у
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:12345678@localhost/test_database'
+app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False  
+app.secret_key = 'your-secret-key-here' # Для flash-сообщений
 db.init_app(app)
 
 @app.route('/')
 def all_employees():
     sort_field = request.args.get('sort', 'id') # Столбец для сортировки (по умолчанию 'id')
     order = request.args.get('order', 'asc') # Направление сортировки asc/desc (по умолчанию 'asc')
-    search_query = request.args.get('search', '').strip() # Параметр поиска  
+    search_query = request.args.get('search', '').strip() # Параметр поиска
 
     if not hasattr(Employee, sort_field): # Проверка, что поле существует в модели
         sort_field = 'id' # Если поле некорректное - сортируем по id
