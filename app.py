@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request
+from flask import Flask, render_template, request, redirect, url_for, flash
 from models import db, Employee
-from sqlalchemy import asc, desc # ф-ии asc и desc используются для указания направления сортировки в запросах к БД.
+from sqlalchemy import asc, desc # ф-ии asc и desc использ. для указания направления сортировки в запросах к БД.
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'postgresql://postgres:12345678@localhost/test_database'
@@ -24,9 +24,27 @@ def all_employees():
 
     employees = query.order_by(sort_order).all()
 
-    return render_template('all_employees9.html', employees=employees,
+    all_employees = Employee.query.all() # Получаем всех сотрудников для выпадающего списка
+
+    return render_template('all_employees.html', employees=employees,
                            sort_field=sort_field, order=order,
-                           search_query=search_query)
+                           all_employees=all_employees, search_query=search_query)
+
+@app.route('/update_manager/<int:employee_id>', methods=['POST'])
+def update_manager(employee_id):
+    new_manager_id = request.form.get('manager_id')
+    if new_manager_id == 'None':
+        new_manager_id = None
+    
+    employee = Employee.query.get_or_404(employee_id)
+    
+    try:
+        employee.update_manager(new_manager_id)
+        flash('Начальник успешно изменен', 'success')
+    except ValueError as e:
+        flash(str(e), 'danger')
+         
+    return redirect(request.referrer or url_for('all_employees')) # Перенаправляем обратно с сохранением параметров 
 
 if __name__ == '__main__':
     with app.app_context():
